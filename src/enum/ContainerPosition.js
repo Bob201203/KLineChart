@@ -12,11 +12,13 @@
  * limitations under the License.
  */
 
-import extension from './store/extension'
-import { version, init, dispose, utils } from './core'
-
-const klinecharts = {
-  version, init, dispose, utils, extension
+/**
+ * 容器位置
+ */
+const ContainerPosition = {
+  ROOT: 'root',
+  CONTENT: 'content',
+  YAXIS: 'yAxis'
 }
 
-export default klinecharts
+export default ContainerPosition
