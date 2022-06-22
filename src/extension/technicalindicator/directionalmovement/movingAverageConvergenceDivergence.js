@@ -56,41 +56,6 @@ export default {
     let emaLong
     let dif = 0
     let dea = 0
-    /*let closeSum = 0
-    let difSum = 0
-    const maxPeriod = Math.max(params[0], params[1])
-    return dataList.map((kLineData, i) => {
-      const macd = {}
-      const close = kLineData.close
-      closeSum += close
-      if (i >= params[0] - 1) {
-        if (i > params[0] - 1) {
-          emaShort = (2 * close + (params[0] - 1) * emaShort) / (params[0] + 1)
-        } else {
-          emaShort = closeSum / params[0]
-        }
-      }
-      if (i >= params[1] - 1) {
-        if (i > params[1] - 1) {
-          emaLong = (2 * close + (params[1] - 1) * emaLong) / (params[1] + 1)
-        } else {
-          emaLong = closeSum / params[1]
-        }
-      }
-      if (i >= maxPeriod - 1) {
-        dif = emaShort - emaLong
-        macd.dif = dif
-        difSum += dif
-        if (i >= maxPeriod + params[2] - 2) {
-          if (i > maxPeriod + params[2] - 2) {
-            dea = (dif * 2 + dea * (params[2] - 1)) / (params[2] + 1)
-          } else {
-            dea = difSum / params[2]
-          }
-          macd.macd = (dif - dea) * 2
-          macd.dea = dea
-        }
-      }*/
     return dataList.map((kLineData, i) => {
       const macd = {}
       const close = kLineData.close

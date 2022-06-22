@@ -18,6 +18,7 @@ import differentOfMovingAverage from './extension/technicalindicator/directional
 import directionalMovementIndex from './extension/technicalindicator/directionalmovement/directionalMovementIndex'
 import easeOfMovementValue from './extension/technicalindicator/directionalmovement/easeOfMovementValue'
 import exponentialMovingAverage from './extension/technicalindicator/directionalmovement/exponentialMovingAverage'
+import forceIndex from './extension/technicalindicator/directionalmovement/forceIndex'
 import movingAverage from './extension/technicalindicator/directionalmovement/movingAverage'
 import movingAverageConvergenceDivergence from './extension/technicalindicator/directionalmovement/movingAverageConvergenceDivergence'
 import simpleMovingAverage from './extension/technicalindicator/directionalmovement/simpleMovingAverage'
@@ -48,7 +49,8 @@ import klinecharts from './index.simple'
 
 klinecharts.extension.addTechnicalIndicatorTemplate([
   averagePrice, bullAndBearIndex, differentOfMovingAverage, directionalMovementIndex, easeOfMovementValue,
-  exponentialMovingAverage, movingAverage, movingAverageConvergenceDivergence, simpleMovingAverage, tripleExponentiallySmoothedAverage,
+  exponentialMovingAverage, forceIndex, movingAverage, movingAverageConvergenceDivergence, simpleMovingAverage,
+  tripleExponentiallySmoothedAverage,
   brar, currentRatio, momentum, psychologicalLine, rateOfChange, volumeRatio,
   awesomeOscillator, bias, commodityChannelIndex, relativeStrengthIndex, stockIndicatorKDJ, williamsR,
   bollingerBands, stopAndReverse,
