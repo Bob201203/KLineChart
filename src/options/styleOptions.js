@@ -137,13 +137,19 @@ const defaultCandle = {
   type: CandleType.CANDLE_SOLID,
   bar: {
     /**
-     * 上涨颜色
+     * 上涨趋势颜色
      */
-    upColor: '#26A69A',
+    upColor: '#63AA6A',
+    //upColor: '#26A69A',
     /**
-     * 下跌颜色
+     * 下跌趋势颜色
      */
-    downColor: '#EF5350',
+    downColor: '#EC4E28',
+    //downColor: '#EF5350',
+    /**
+     * 震荡颜色
+     */
+    shockColor: '#64699A',
     /**
      * 无变化时颜色
      */
@@ -181,8 +187,11 @@ const defaultCandle = {
     },
     last: {
       show: true,
-      upColor: '#26A69A',
-      downColor: '#EF5350',
+      //upColor: '#26A69A',
+      //downColor: '#EF5350',
+      upColor: '#63AA6A',
+      downColor: '#EC4E28',
+      shockColor: '#64699A',
       noChangeColor: '#888888',
       line: {
         show: true,
@@ -246,8 +255,10 @@ const defaultTechnicalIndicator = {
     bottom: 0.1
   },
   bar: {
-    upColor: 'rgba(38, 166, 154, .65)',
-    downColor: 'rgba(239, 83, 80, .65)',
+    //upColor: 'rgba(38, 166, 154, .65)',
+    //downColor: 'rgba(239, 83, 80, .65)',
+    upColor: 'rgba(99, 170, 106, .65)',
+    downColor: 'rgba(236, 78, 40, .65)',
     noChangeColor: '#888888'
   },
   line: {
@@ -255,8 +266,10 @@ const defaultTechnicalIndicator = {
     colors: ['#FF9600', '#9D65C9', '#2196F3', '#E11D74', '#01C5C4']
   },
   circle: {
-    upColor: 'rgba(38, 166, 154, .65)',
-    downColor: 'rgba(239, 83, 80, .65)',
+    //upColor: 'rgba(38, 166, 154, .65)',
+    //downColor: 'rgba(239, 83, 80, .65)',
+    upColor: 'rgba(99, 170, 106, .65)',
+    downColor: 'rgba(236, 78, 40, .65)',
     noChangeColor: '#888888'
   },
   lastValueMark: {
