@@ -16,11 +16,17 @@ import EventHandler from './EventHandler'
 
 import { isMouse, isTouch } from './eventTypeChecks'
 
+import { requestAnimationFrame, cancelAnimationFrame } from '../utils/compatible'
+
 const TOUCH_MIN_RADIUS = 10
 
 export default class ZoomScrollEventHandler extends EventHandler {
   constructor (chartStore) {
     super(chartStore)
+    // 惯性滚动开始时间
+    this._flingStartTime = null
+    // 惯性滚动定时器
+    this._flingScrollTimerId = null
     // 开始滚动时坐标点
     this._startScrollCoordinate = null
     // 开始触摸时坐标
@@ -49,9 +55,35 @@ export default class ZoomScrollEventHandler extends EventHandler {
   }
 
   mouseLeaveEvent (event) {
-    this._startScrollCoordinate = null
-    if (isMouse(event)) {
-      this._chartStore.crosshairStore().set()
+    if (isTouch(event)) {
+      if (this._startScrollCoordinate) {
+        const time = new Date().getTime() - this._flingStartTime
+        const distance = event.localX - this._startScrollCoordinate.x
+        let v = (distance) / (time > 0 ? time : 1) * 20
+        if (time < 200 && Math.abs(v) > 0) {
+          const flingScroll = () => {
+            this._flingScrollTimerId = requestAnimationFrame(() => {
+              this._chartStore.timeScaleStore().startScroll()
+              this._chartStore.timeScaleStore().scroll(v)
+              v = v * (1 - 0.025)
+              if (Math.abs(v) < 1) {
+                if (this._flingScrollTimerId) {
+                  cancelAnimationFrame(this._flingScrollTimerId)
+                  this._flingScrollTimerId = null
+                }
+              } else {
+                flingScroll()
+              }
+            })
+          }
+          flingScroll()
+        }
+      }
+    } else {
+      this._startScrollCoordinate = null
+      if (isMouse(event)) {
+        this._chartStore.crosshairStore().set()
+      }
     }
   }
 
@@ -109,6 +141,11 @@ export default class ZoomScrollEventHandler extends EventHandler {
   }
 
   mouseDownEvent (event) {
+    if (this._flingScrollTimerId) {
+      cancelAnimationFrame(this._flingScrollTimerId)
+      this._flingScrollTimerId = null
+    }
+    this._flingStartTime = new Date().getTime()
     this._startScrollCoordinate = { x: event.localX, y: event.localY }
     this._chartStore.timeScaleStore().startScroll()
     if (isTouch(event)) {

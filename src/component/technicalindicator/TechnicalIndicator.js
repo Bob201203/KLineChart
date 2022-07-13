@@ -48,6 +48,7 @@ export function getTechnicalIndicatorPlotStyle (
 ) {
   let color = defaultStyle.color
   let isStroke = defaultStyle.isStroke
+  let isDashed = defaultStyle.isDashed
   const cbData = {
     prev: { kLineData: kLineDataList[dataIndex - 1], technicalIndicatorData: techDataList[dataIndex - 1] },
     current: { kLineData: kLineDataList[dataIndex], technicalIndicatorData: techDataList[dataIndex] },
@@ -67,14 +68,21 @@ export function getTechnicalIndicatorPlotStyle (
       isStroke = plot.isStroke
     }
   }
-  return { color, isStroke }
+  if (isValid(plot.isDashed)) {
+    if (isFunction(plot.isDashed)) {
+      isDashed = plot.isDashed(cbData)
+    } else {
+      isDashed = plot.isDashed
+    }
+  }
+  return { color, isStroke, isDashed }
 }
 
 export default class TechnicalIndicator {
   constructor ({
     name, shortName, series, calcParams, plots, precision,
     shouldCheckParamCount, shouldOhlc, shouldFormatBigNumber,
-    minValue, maxValue, styles
+    minValue, maxValue, styles, extendData
   }) {
     // 指标名
     this.name = name || ''
@@ -102,6 +110,8 @@ export default class TechnicalIndicator {
     this.maxValue = maxValue
     // 样式
     this.styles = styles
+    // 扩展数据
+    this.extendData = extendData
     // 结果
     this.result = []
   }
@@ -221,6 +231,14 @@ export default class TechnicalIndicator {
     return true
   }
 
+  setExtendData (extendData) {
+    if (extendData !== undefined && this.extendData !== extendData) {
+      this.extendData = extendData
+      return true
+    }
+    return false
+  }
+
   /**
    * 计算
    * @param dataList
@@ -229,7 +247,8 @@ export default class TechnicalIndicator {
   async calc (dataList) {
     this.result = await this.calcTechnicalIndicator(dataList, {
       params: this._createParams(this.calcParams),
-      plots: this.plots
+      plots: this.plots,
+      extendData: this.extendData
     }) || []
   }
 

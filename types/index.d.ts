@@ -72,6 +72,7 @@ declare namespace klinecharts {
     baseValue?: number;
     color?: (data: TechnicalIndicatorPlotCallbackData, options: any) => string;
     isStroke?: (data: TechnicalIndicatorPlotCallbackData) => boolean;
+    isDashed?: (data: TechnicalIndicatorPlotCallbackData) => boolean;
   }
   
   interface TechnicalIndicator {
@@ -82,6 +83,7 @@ declare namespace klinecharts {
     shouldOhlc?: boolean;
     shouldFormatBigNumber?: boolean;
     styles?: any;
+    extendData?: any;
   }
   
   interface TechnicalIndicatorRenderDataSource extends DataSource {}
@@ -149,6 +151,7 @@ declare namespace klinecharts {
   
   interface OverrideShape {
     id?: string;
+    points?: Point[];
     styles?: any;
     lock?: boolean;
     mode?: ShapeMode;
@@ -157,7 +160,6 @@ declare namespace klinecharts {
   
   interface Shape extends OverrideShape {
     name: string;
-    points?: Point[];
     onDrawStart?: (event: ShapeEvent) => void;
     onDrawing?: (event: ShapeEvent) => void;
     onDrawEnd?: (event: ShapeEvent) => void;
@@ -268,6 +270,7 @@ declare namespace klinecharts {
   interface PaneOptions {
     id?: string;
     height?: number;
+    minHeight?: number;
     dragEnabled?: boolean;
   }
 
@@ -293,7 +296,7 @@ declare namespace klinecharts {
   type PictureType = 'png' | 'jpeg' | 'bmp';
 
   interface Chart {
-    getDom(finder?: DomFinder): HTMLDivElement | null;
+    getDom(finder?: DomFinder): HTMLDivElement;
     getWidth(): any;
     getHeight(): any;
     setStyleOptions(options: any): void;
@@ -318,13 +321,13 @@ declare namespace klinecharts {
     updateData(data: KLineData): void;
     loadMore(cb: (timestamp: number) => void): void;
     addTechnicalIndicatorTemplate(template: TechnicalIndicatorTemplate | TechnicalIndicatorTemplate[]): void;
-    createTechnicalIndicator(value: string | TechnicalIndicator, isStack?: boolean, options?: PaneOptions): string | null;
+    createTechnicalIndicator(value: string | TechnicalIndicator, isStack?: boolean, options?: PaneOptions): string;
     overrideTechnicalIndicator(tech: TechnicalIndicator, paneId?: string): void;
     getTechnicalIndicatorTemplate(name?: string): any;
     getTechnicalIndicatorByPaneId(paneId?: string, name?: string): any;
     removeTechnicalIndicator(paneId: string, name?: string): void;
     addShapeTemplate(template: ShapeTemplate | ShapeTemplate[]): void;
-    createShape(value: string | Shape, paneId?: string): string | null;
+    createShape(value: string | Shape, paneId?: string): string;
     getShape(shapeId?: string): any;
     setShapeOptions(options: OverrideShape): void;
     removeShape(shapeId?: string): void;
@@ -332,7 +335,7 @@ declare namespace klinecharts {
     removeAnnotation(paneId?: string, point?: Point | Point[]): void;
     createTag(tag: Tag | Tag[], paneId?: string): void;
     removeTag(paneId?: string, tagId?: string | string[]): void;
-    createHtml(html: HTML, paneId?: string): string | null;
+    createHtml(html: HTML, paneId?: string): string;
     removeHtml(paneId?: string, htmlId?: string | string[]): void;
     scrollByDistance(distance: number, animationDuration?: number): void;
     scrollToRealTime(animationDuration?: number): void;
@@ -375,7 +378,7 @@ declare namespace klinecharts {
   
   function version(): string;
 
-  function init(ds: HTMLDivElement | string, style?: any): Chart | null;
+  function init(ds: HTMLDivElement | string, style?: any): Chart;
   
   function dispose(dcs: HTMLDivElement | Chart | string): void;
 }
