@@ -1,4 +1,20 @@
 # Change Log
+## 8.6.0
+`2022-06-28`
++ 🆕 Api `setShapeOptions` add `points` parameter.
++ 🆕 Add `minHeight` for pane.
++ 🆕 When the technical indicator template `plot.type` is `line`, add the property `isDashed` and segment.
++ 🆕 Add inertial scrolling on mobile.
++ 🆕 Add new attribute `extendData` for technical indicators.
++ 🐞 Fix shape text style not working.
++ 🐞 Fix built-in line drawing model `priceLine` display problem.
++ 💄 Optimize tooltip to display automatic line wrapping.
+
+## 8.5.0
+`2022-05-29`
++ 🆕 Instance api add `getDom`, `scrollToTimestamp` and `zoomAtTimestamp`.
++ 🆕 Style configuration add `yAxis.reverse`.
++ 🐞 Fix typescript reference issue.
 
 ## 8.3.6
 `2022-03-23`

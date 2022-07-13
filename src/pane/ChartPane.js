@@ -160,6 +160,10 @@ export default class ChartPane {
    * @private
    */
   _separatorDrag (dragDistance, topPaneId, bottomPaneId) {
+    const topPane = this._panes.get(topPaneId)
+    const bottomPane = this._panes.get(bottomPaneId)
+    const topPaneMinHeight = topPane.minHeight()
+    const bottomPaneMinHeight = bottomPane.minHeight()
     let topPaneHeight = this._separatorDragStartTopPaneHeight + dragDistance
     let bottomPaneHeight = this._separatorDragStartBottomPaneHeight - dragDistance
     if (topPaneHeight > this._separatorDragStartTopPaneHeight + this._separatorDragStartBottomPaneHeight) {
@@ -170,8 +174,16 @@ export default class ChartPane {
       topPaneHeight = 0
       bottomPaneHeight = this._separatorDragStartTopPaneHeight + this._separatorDragStartBottomPaneHeight
     }
-    this._panes.get(topPaneId).setHeight(topPaneHeight)
-    this._panes.get(bottomPaneId).setHeight(bottomPaneHeight)
+    if (topPaneHeight < topPaneMinHeight) {
+      bottomPaneHeight -= bottomPaneMinHeight - topPaneHeight
+      topPaneHeight = topPaneMinHeight
+    }
+    if (bottomPaneHeight < bottomPaneMinHeight) {
+      topPaneHeight -= topPaneMinHeight - bottomPaneHeight
+      bottomPaneHeight = bottomPaneMinHeight
+    }
+    topPane.setHeight(topPaneHeight)
+    bottomPane.setHeight(bottomPaneHeight)
     this._chartStore.actionStore().execute(ActionType.PANE_DRAG, { topPaneId, bottomPaneId, topPaneHeight, bottomPaneHeight })
     this.adjustPaneViewport(true, true, true, true, true)
   }
@@ -208,17 +220,26 @@ export default class ChartPane {
     const separatorSize = styleOptions.separator.size
     const separatorTotalHeight = separatorSize * this._separators.size
     const xAxisHeight = this._xAxisPane.xAxis().getSelfHeight()
-    const paneExcludeXAxisSeparatorHeight = paneHeight - xAxisHeight - separatorTotalHeight
+    let paneExcludeXAxisSeparatorHeight = paneHeight - xAxisHeight - separatorTotalHeight
+    if (paneExcludeXAxisSeparatorHeight < 0) {
+      paneExcludeXAxisSeparatorHeight = 0
+    }
     let techPaneTotalHeight = 0
     this._panes.forEach(pane => {
       if (pane.id() !== CANDLE_PANE_ID) {
-        const paneHeight = pane.height()
+        let paneHeight = pane.height()
+        const paneMinHeight = pane.minHeight()
+        if (paneHeight < paneMinHeight) {
+          paneHeight = paneMinHeight
+        }
         if (techPaneTotalHeight + paneHeight > paneExcludeXAxisSeparatorHeight) {
-          pane.setHeight(paneExcludeXAxisSeparatorHeight - techPaneTotalHeight)
           techPaneTotalHeight = paneExcludeXAxisSeparatorHeight
+          paneHeight = paneExcludeXAxisSeparatorHeight - techPaneTotalHeight
+          if (paneHeight < 0) paneHeight = 0
         } else {
           techPaneTotalHeight += paneHeight
         }
+        pane.setHeight(paneHeight)
       }
     })
 
@@ -260,26 +281,36 @@ export default class ChartPane {
     let yAxisWidth = Number.MIN_SAFE_INTEGER
     let yAxisOffsetLeft
     let mainOffsetLeft
+    this._panes.forEach(pane => {
+      yAxisWidth = Math.max(yAxisWidth, pane.yAxis().getSelfWidth())
+    })
+    if (yAxisWidth > paneWidth) {
+      yAxisWidth = paneWidth
+    }
     if (isOutside) {
-      this._panes.forEach(pane => {
-        yAxisWidth = Math.max(yAxisWidth, pane.yAxis().getSelfWidth())
-      })
       mainWidth = paneWidth - yAxisWidth
       if (isYAxisLeft) {
         yAxisOffsetLeft = 0
         mainOffsetLeft = yAxisWidth
       } else {
-        mainOffsetLeft = 0
         yAxisOffsetLeft = paneWidth - yAxisWidth
+        mainOffsetLeft = 0
       }
     } else {
       mainWidth = paneWidth
-      yAxisWidth = paneWidth
-      yAxisOffsetLeft = 0
       mainOffsetLeft = 0
+      if (isYAxisLeft) {
+        yAxisOffsetLeft = 0
+      } else {
+        yAxisOffsetLeft = paneWidth - yAxisWidth
+      }
     }
 
-    this._chartStore.timeScaleStore().setTotalDataSpace(mainWidth)
+    let totalDataSpace = mainWidth
+    if (totalDataSpace < this._chartStore.timeScaleStore().dataSpace()) {
+      totalDataSpace = this._chartStore.timeScaleStore().dataSpace()
+    }
+    this._chartStore.timeScaleStore().setTotalDataSpace(totalDataSpace)
 
     this._panes.forEach((pane, paneId) => {
       pane.setWidth(mainWidth, yAxisWidth)
@@ -292,6 +323,12 @@ export default class ChartPane {
     this._xAxisPane.setOffsetLeft(mainOffsetLeft, yAxisOffsetLeft)
     this._chartEvent.setChartContentLeftRight({ contentLeft: mainOffsetLeft, contentRight: mainOffsetLeft + mainWidth })
   }
+
+  /**
+   * 获取容器
+   * @returns
+   */
+  getContainer () { return this._container }
 
   /**
    * 调整窗口尺寸
@@ -417,7 +454,8 @@ export default class ChartPane {
       chartStore: this._chartStore,
       xAxis: this._xAxisPane.xAxis(),
       id,
-      height: options.height || DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT
+      height: options.height || DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT,
+      minHeight: options.minHeight
     })
     this._panes.set(id, pane)
     const task = this._chartStore.technicalIndicatorStore().addInstance(id, tech, isStack)
@@ -589,10 +627,17 @@ export default class ChartPane {
     if (options.id !== CANDLE_PANE_ID) {
       const pane = this._panes.get(options.id)
       if (pane) {
-        if (isNumber(options.height) && options.height > 0 && pane.height() !== options.height) {
-          shouldAdjust = true
-          pane.setHeight(options.height)
-          shouldMeasureHeight = true
+        if (isNumber(options.minHeight) && options.minHeight > 0) {
+          pane.setMinHeight(options.minHeight)
+        }
+        if (isNumber(options.height) && options.height > 0) {
+          const minHeight = pane.minHeight()
+          const height = options.height < pane.minHeight ? minHeight : options.height
+          if (pane.height() !== height) {
+            shouldAdjust = true
+            pane.setHeight(options.height)
+            shouldMeasureHeight = true
+          }
         }
         if (isBoolean(options.dragEnabled)) {
           this._separators.get(options.id).setDragEnabled(options.dragEnabled)

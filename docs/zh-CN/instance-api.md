@@ -1,5 +1,12 @@
 # 实例API
 
+### getDom(finder)
+获取dom容器
+- `finder` 过滤条件，缺省返回根容器，`{ paneId, position }`
+  - `pandId` 窗口id
+  - `position` 位置，可选参数'root'，'content'和'yAxis'
+
+
 ### getWidth()
 获取图表宽度。
 
@@ -116,6 +123,7 @@
 - `paneOptions` 窗口配置信息，可缺省， `{ id, height, dragEnabled }`
    - `id` 窗口id，可缺省。特殊的paneId: candle_pane，主图的窗口id
    - `height` 窗口高度，可缺省
+   - `minHeight` 窗口最小高度，可缺省
    - `dragEnbaled` 窗口是否可以拖拽调整高度，可缺省
 
 示例：
@@ -123,6 +131,7 @@
 chart.createTechnicalIndicator('MA', false, {
   id: 'pane_1',
   height: 100,
+  minHeight: 50,
   dragEnabled: true
 })
 ```
@@ -258,6 +267,7 @@ chart.createShape({
 设置已绘制的图形标记配置。
 - `options` 配置， `{ id, styles, lock, mode, data }`
    - `id` 图形标记标识，缺省则设置所有的
+   - `points` 点信息
    - `styles` 样式，可缺省，格式同样式配置中 `shape` 一致
    - `lock` 是否锁定，可缺省
    - `mode` 模式类型，可缺省，类型为'normal' | 'weak_magnet' | 'strong_magnet'
@@ -428,6 +438,11 @@ chart.createHtml({
 - `dataIndex` 数据的索引
 - `animationDuration` 动画时间，可以缺省，缺省则无动画
 
+### scrollToTimestamp(timestamp, animationDuration)
+滚动到指定时间戳。
+- `timestamp` 时间戳
+- `animationDuration` 动画时间，可以缺省，缺省则无动画
+
 
 ### zoomAtCoordinate(scale, coordinate, animationDuration)
 在某个坐标点缩放。
@@ -443,11 +458,19 @@ chart.createHtml({
 - `animationDuration` 动画时间，可以缺省，缺省则无动画
 
 
+### zoomAtTimestamp(scale, timestamp, animationDuration)
+在指定时间戳上缩放。
+- `scale` 缩放比例
+- `timestamp` 时间戳
+- `animationDuration` 动画时间，可以缺省，缺省则无动画
+
+
 ### setPaneOptions(options)
 设置窗口配置。
 - `options` 窗口配置 `{ id, height, dragEnabled }`
   - `id` 窗口id
   - `height` 窗口高度，可缺省
+  - `minHeihgt`: 最小高度，可缺省
   - `dragEnbaled` 窗口是否可以拖拽调整高度，可缺省
 
 示例：
@@ -455,6 +478,7 @@ chart.createHtml({
 chart.setPaneOptions({
   id: 'pane_1',
   height: 100,
+  minHeight: 50,
   dragEnabled: true
 })
 ```

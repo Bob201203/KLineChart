@@ -17,10 +17,35 @@ import { clone, isNumber, isObject, isArray, isFunction, isValid, isString } fro
 import { logWarn } from './utils/logger'
 import { requestAnimationFrame } from './utils/compatible'
 import { formatValue } from './utils/format'
+import { binarySearchNearest } from './utils/number'
+
+import { hasAction } from './enum/ActionType'
 
 export default class Chart {
   constructor (container, styleOptions) {
     this._chartPane = new ChartPane(container, styleOptions)
+  }
+
+  /**
+   * 获取dom
+   * @param finder
+   * @returns
+   */
+  getDom (finder) {
+    if (finder) {
+      if (!isObject(finder)) {
+        logWarn('getDom', 'options', 'options must be an object!!!')
+        return null
+      }
+      const { paneId, position } = finder
+      const pane = this._chartPane.getPane(paneId)
+      if (!pane) {
+        logWarn('getDom', 'options.paneId', 'can not find the corresponding pane!!!')
+        return null
+      }
+      return pane.container(position) || null
+    }
+    return this._chartPane.getContainer()
   }
 
   /**
@@ -592,6 +617,20 @@ export default class Chart {
   }
 
   /**
+   * 滚动到指定时间戳
+   * @param timestamp 时间戳
+   * @param animationDuration 动画持续时间
+   */
+  scrollToTimestamp (timestamp, animationDuration) {
+    if (!isNumber(timestamp)) {
+      logWarn('scrollToTimestamp', 'timestamp', 'timestamp must be a number!!!')
+      return
+    }
+    const dataIndex = binarySearchNearest(this._chartPane.chartStore().dataList(), 'timestamp', timestamp)
+    this.scrollToDataIndex(dataIndex, animationDuration)
+  }
+
+  /**
    * 在某个坐标点缩放
    * @param scale 缩放比例
    * @param coordinate 坐标点
@@ -642,6 +681,25 @@ export default class Chart {
   }
 
   /**
+   * 在某个时间戳缩放
+   * @param scale 缩放比例
+   * @param timestamp 时间戳
+   * @param animationDuration 动画持续时间
+   */
+  zoomAtTimestamp (scale, timestamp, animationDuration) {
+    if (!isNumber(scale)) {
+      logWarn('zoomAtTimestamp', 'scale', 'scale must be a number!!!')
+      return
+    }
+    if (!isNumber(timestamp)) {
+      logWarn('zoomAtTimestamp', 'timestamp', 'timestamp must be a number!!!')
+      return
+    }
+    const dataIndex = binarySearchNearest(this._chartPane.chartStore().dataList(), 'timestamp', timestamp)
+    this.zoomAtDataIndex(scale, dataIndex, animationDuration)
+  }
+
+  /**
    * 将值装换成像素
    * @param point 单个点或者点集合
    * @param finder 过滤条件
@@ -665,9 +723,15 @@ export default class Chart {
    * @param callback 回调方法
    */
   subscribeAction (type, callback) {
-    if (!this._chartPane.chartStore().actionStore().subscribe(type, callback)) {
+    if (!hasAction(type)) {
       logWarn('subscribeAction', 'type', 'type does not exist!!!')
+      return
     }
+    if (!isFunction(callback)) {
+      logWarn('subscribeAction', 'callback', 'callback must be a function!!!')
+      return
+    }
+    this._chartPane.chartStore().actionStore().subscribe(type, callback)
   }
 
   /**
@@ -676,9 +740,11 @@ export default class Chart {
    * @param callback 回调方法
    */
   unsubscribeAction (type, callback) {
-    if (!this._chartPane.chartStore().actionStore().unsubscribe(type, callback)) {
+    if (!hasAction(type)) {
       logWarn('unsubscribeAction', 'type', 'type does not exist!!!')
+      return
     }
+    this._chartPane.chartStore().actionStore().unsubscribe(type, callback)
   }
 
   /**

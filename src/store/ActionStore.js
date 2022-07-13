@@ -78,14 +78,10 @@ export default class ActionStore {
    * @return {boolean}
    */
   subscribe (type, callback) {
-    if (hasAction(type)) {
-      if (!this._delegates.has(type)) {
-        this._delegates.set(type, new Delegate())
-      }
-      this._delegates.get(type).subscribe(callback)
-      return true
+    if (!this._delegates.has(type)) {
+      this._delegates.set(type, new Delegate())
     }
-    return false
+    this._delegates.get(type).subscribe(callback)
   }
 
   /**
@@ -97,12 +93,12 @@ export default class ActionStore {
   unsubscribe (type, callback) {
     if (hasAction(type)) {
       const delegate = this._delegates.get(type)
-      delegate.unsubscribe(callback)
-      if (!delegate.hasObservers()) {
-        this._delegates.delete(type)
+      if (delegate) {
+        delegate.unsubscribe(callback)
+        if (!delegate.hasObservers()) {
+          this._delegates.delete(type)
+        }
       }
-      return true
     }
-    return false
   }
 }
