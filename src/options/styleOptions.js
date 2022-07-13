@@ -149,7 +149,7 @@ const defaultCandle = {
     /**
      * 震荡颜色
      */
-    shockColor: '#64699A',
+    shockColor: '#9284F5',
     /**
      * 无变化时颜色
      */
@@ -191,7 +191,7 @@ const defaultCandle = {
       //downColor: '#EF5350',
       upColor: '#63AA6A',
       downColor: '#EC4E28',
-      shockColor: '#64699A',
+      shockColor: '#9284F5',
       noChangeColor: '#888888',
       line: {
         show: true,
@@ -263,7 +263,7 @@ const defaultTechnicalIndicator = {
   },
   line: {
     size: 1,
-    colors: ['#FF9600', '#9D65C9', '#2196F3', '#E11D74', '#01C5C4']
+    colors: ['#504C4A', '#D1BC59', '#2196F3', '#E11D74', '#01C5C4']
   },
   circle: {
     //upColor: 'rgba(38, 166, 154, .65)',

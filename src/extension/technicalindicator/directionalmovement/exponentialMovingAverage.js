@@ -24,8 +24,10 @@ export default {
   shouldCheckParamCount: false,
   shouldOhlc: true,
   plots: [
-    { key: 'ema13', title: 'EMA13: ', type: 'line' },
-    { key: 'ema26', title: 'EMA26: ', type: 'line' }
+    { key: 'emaShort', title: 'EMA13: ', type: 'line' },
+    { key: 'emaLong', title: 'EMA26: ', type: 'line' },
+    { key: 'up', title: 'Up: ', type: 'line' },
+    { key: 'bo', title: 'Bottom: ', type: 'line' }
   ],
   regeneratePlots: (params) => {
     return params.map(p => {
@@ -34,7 +36,7 @@ export default {
   },
   calcTechnicalIndicator: (dataList, { params, plots }) => {
     const emaValues = []
-    return dataList.map((kLineData, i) => {
+    const kk = dataList.map((kLineData, i) => {
       const ema = {}
       const close = kLineData.close
       params.forEach((p, index) => {
@@ -45,7 +47,46 @@ export default {
         }
         ema[plots[index].key] = emaValues[index]
       })
+      kLineData.ema = ema
       return ema
     })
+    let r = 0.2
+    if (dataList.length >= 100) {
+      var arr = []
+      for (var i = dataList.length - 100; i < dataList.length; i++) {
+        if (dataList[i].close < kk[i]['emaLong']) {
+          arr.push(kk[i]['emaLong'] / dataList[i].close - 1)
+        } else {
+          arr.push(1 - kk[i]['emaLong'] / dataList[i].close)
+        }
+      }
+      arr.sort()
+      r = 0
+      for (var i = 85; i < 100; i++) {
+        r = r + arr[i]
+      }
+      r = r / 15;
+      for (var i = 86; i < 100; i++) {
+        if (r <= arr[i] && r > arr[i-1]) {
+          r = arr[i]
+          break
+        }
+      }
+      // 至少5个元素
+      if (r > arr[95]) {
+        r = arr[95]
+      }
+      // 至多10个元素
+      if (r < arr[90]) {
+        r = arr[90]
+      }
+    }
+    var e
+    for (var i = 0; i < kk.length; i++) {
+      e = kk[i]['emaLong']
+      kk[i]['up'] = e * (1 + r)
+      kk[i]['bo'] = e * (1 - r)
+    }
+    return kk
   }
 }

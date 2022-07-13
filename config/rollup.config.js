@@ -64,7 +64,7 @@ module.exports = [
     output: getOutputConfig('klinecharts.min', 'production'),
     plugins: getPlugins('production')
   },
-
+/*
   // umd development blank
   {
     input: 'src/index.blank.js',
@@ -91,5 +91,5 @@ module.exports = [
     input: 'src/index.simple.js',
     output: getOutputConfig('klinecharts.simple.min', 'production'),
     plugins: getPlugins('production')
-  }
+  }*/
 ]

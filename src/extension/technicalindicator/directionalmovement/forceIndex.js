@@ -23,8 +23,8 @@ export default {
   shortName: 'FI',
   calcParams: [2, 13],
   plots: [
-    { key: 'fi2', title: 'FI2: ', baseValue: 0, type: 'line' },
-    { key: 'fi13', title: 'FI13: ', baseValue: 0, type: 'line' },
+    { key: 'fiShort', title: 'FI2: ', baseValue: 0, type: 'line' },
+    { key: 'fiLong', title: 'FI13: ', baseValue: 0, type: 'line' },
   ],
   calcTechnicalIndicator: (dataList, { params }) => {
     let fiShort
@@ -41,8 +41,8 @@ export default {
         fiShort = volume * (close - preClose)
         fiLong = volume * (close - preClose)
       }
-      fi.fi2 = fiShort
-      fi.fi13 = fiLong
+      fi.fiShort = fiShort
+      fi.fiLong = fiLong
       return fi
     })
   }

@@ -16,15 +16,14 @@ export default {
   name: 'VOL',
   shortName: 'VOL',
   series: 'volume',
-  calcParams: [5, 10, 20],
+  calcParams: [10, 40],
   shouldCheckParamCount: false,
   shouldFormatBigNumber: true,
   precision: 0,
   minValue: 0,
   plots: [
-    { key: 'ma5', title: 'MA5: ', type: 'line' },
     { key: 'ma10', title: 'MA10: ', type: 'line' },
-    { key: 'ma20', title: 'MA20: ', type: 'line' },
+    { key: 'ma40', title: 'MA40: ', type: 'line' },
     {
       key: 'volume',
       title: 'VOLUME: ',

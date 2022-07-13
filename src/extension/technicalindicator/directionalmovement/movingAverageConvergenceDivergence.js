@@ -71,6 +71,7 @@ export default {
       dea = (dif * 2 + dea * (params[2] - 1)) / (params[2] + 1)
       macd.macd = (dif - dea) * 2
       macd.dea = dea
+      kLineData.macd = macd
       return macd
     })
   }

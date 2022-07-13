@@ -117,11 +117,11 @@ export default class TechnicalIndicatorView extends View {
       const isCandleYAxis = this._yAxis.isCandleYAxis()
       this._ctx.lineWidth = 1
       this._drawGraphics(
-        (x, i, kLineData, halfBarSpace, barSpace) => {
+        (x, i, kLineData, kLinePreData, halfBarSpace, barSpace) => {
           const techData = techResult[i] || {}
           let lineCount = 0
           if (tech.shouldOhlc && !isCandleYAxis) {
-            this._drawCandleBar(x, halfBarSpace, barSpace, kLineData, styles.bar, CandleType.OHLC)
+            this._drawCandleBar(x, halfBarSpace, barSpace, kLineData, kLinePreData, styles.bar, CandleType.OHLC)
           }
           plots.forEach(plot => {
             const value = techData[plot.key]
@@ -206,10 +206,11 @@ export default class TechnicalIndicatorView extends View {
    */
   _drawGraphics (onDrawing, onDrawEnd) {
     const visibleDataList = this._chartStore.visibleDataList()
+    const dataList = this._chartStore.dataList()
     const barSpace = this._chartStore.timeScaleStore().barSpace()
     const halfBarSpace = this._chartStore.timeScaleStore().halfBarSpace()
     visibleDataList.forEach(({ x, index, data }, n) => {
-      onDrawing(x, index, data, halfBarSpace, barSpace, n)
+      onDrawing(x, index, data, dataList[index-1], halfBarSpace, barSpace, n)
     })
     onDrawEnd && onDrawEnd()
   }
@@ -267,18 +268,22 @@ export default class TechnicalIndicatorView extends View {
    * @param barOptions
    * @param barStyle
    */
-  _drawCandleBar (x, halfBarSpace, barSpace, kLineData, barOptions, barStyle) {
-    const { open, close, high, low } = kLineData
-    if (close > open) {
+  _drawCandleBar (x, halfBarSpace, barSpace, kLineData, preKLineData, barOptions, barStyle) {
+    const ema = kLineData.ema.emaLong
+    const macd = kLineData.macd.macd
+    const preEma = preKLineData === undefined ? 0 : preKLineData.ema.emaLong
+    const preMacd = preKLineData === undefined ? 0 : preKLineData.macd.macd
+    if (ema >= preEma && macd >= preMacd) {
       this._ctx.strokeStyle = barOptions.upColor
       this._ctx.fillStyle = barOptions.upColor
-    } else if (close < open) {
+    } else if (ema <= preEma && macd <= preMacd) {
       this._ctx.strokeStyle = barOptions.downColor
       this._ctx.fillStyle = barOptions.downColor
     } else {
-      this._ctx.strokeStyle = barOptions.noChangeColor
-      this._ctx.fillStyle = barOptions.noChangeColor
+      this._ctx.strokeStyle = barOptions.shockColor
+      this._ctx.fillStyle = barOptions.shockColor
     }
+    const { open, close, high, low } = kLineData
     const openY = this._yAxis.convertToPixel(open)
     const closeY = this._yAxis.convertToPixel(close)
     const priceY = [

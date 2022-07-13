@@ -104,8 +104,8 @@ export default class CandleView extends TechnicalIndicatorView {
    * @private
    */
   _drawCandle (candleOptions) {
-    this._drawGraphics((x, i, kLineData, halfBarSpace, barSpace) => {
-      this._drawCandleBar(x, halfBarSpace, barSpace, kLineData, candleOptions.bar, candleOptions.type)
+    this._drawGraphics((x, i, kLineData, kLinePreData, halfBarSpace, barSpace) => {
+      this._drawCandleBar(x, halfBarSpace, barSpace, kLineData, kLinePreData, candleOptions.bar, candleOptions.type)
     })
   }
 
@@ -214,15 +214,19 @@ export default class CandleView extends TechnicalIndicatorView {
       return
     }
     const close = kLineData.close
-    const open = kLineData.open
+    const ema = kLineData.ema.emaLong
+    const macd = kLineData.macd.macd
+    const preKLineData = dataList.length > 1 ? dataList[dataList.length - 2] : undefined
+    const preMacd = preKLineData === undefined ? 0 : preKLineData.macd.macd
+    const preEma = preKLineData === undefined ? 0 : preKLineData.ema.emaLong
     const priceY = this._yAxis.convertToNicePixel(close)
     let color
-    if (close > open) {
+    if (ema >= preEma && macd >= preMacd) {
       color = lastPriceMarkOptions.upColor
-    } else if (close < open) {
+    } else if (ema <= preEma && macd <= preMacd) {
       color = lastPriceMarkOptions.downColor
     } else {
-      color = lastPriceMarkOptions.noChangeColor
+      color = lastPriceMarkOptions.shockColor
     }
     this._ctx.save()
     this._ctx.strokeStyle = color
