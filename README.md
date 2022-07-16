@@ -67,3 +67,40 @@ KLineChart is available under the Apache License V2.
 + USDT-ERC20: [0xd2c3911654db861e0a2e17415e11a209c1fc3594]()
 + USDT-Omni: [3DSXSbTbMwXumaaqMySVPgedBP9rGhpnfQ]()
 + USDT-TRC20: [THJpTQmFGaVm12KE1Jzc5mLXiApP6qXMCi]()
+
+
+### 合并代码
+
+➜  KLineChart git:(gyc) git pull --rebase
+➜  KLineChart git:(gyc) git checkout master
+➜  KLineChart git:(master) git pull --rebase
+➜  KLineChart git:(master) git checkout gyc
+➜  KLineChart git:(gyc) git merge master --squash
+冲突（修改/删除）：config/rollup.config.js 在 master 中被删除，在 HEAD 中被修改。config/rollup.config.js 的 HEAD 版本在树中被保留。
+自动合并 src/options/styleOptions.js
+冲突（内容）：合并冲突于 src/options/styleOptions.js
+自动合并 src/view/TechnicalIndicatorView.js
+挤压提交 -- 未更新 HEAD
+自动合并失败，修正冲突然后提交修正的结果。
+➜  KLineChart git:(gyc) ✗ git rm -r --force config
+rm 'config/rollup.config.js'
+rm 'config/rollup.config.js
+➜  KLineChart git:(gyc) ✗ gst
+位于分支 gyc
+您的分支与上游分支 'origin/gyc' 一致。
+
+要提交的变更：
+  （使用 "git restore --staged <文件>..." 以取消暂存）
+	修改：     .eslintignore
+	...
+  （使用 "git restore --staged <文件>..." 以取消暂存）
+  （使用 "git add <文件>..." 标记解决方案）
+	双方修改：   src/options/styleOptions.js
+
+➜  KLineChart git:(gyc) ✗ git add src/options/styleOptions.js
+➜  KLineChart git:(gyc) ✗ gcsm 'Merge from master'
+➜  KLineChart git:(gyc) ggpush
+➜  KLineChart git:(gyc) npm run build
+
+
+

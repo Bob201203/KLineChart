@@ -336,7 +336,8 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
       values.forEach((value, index) => {
         switch (index) {
           case 0: {
-            values[index] = formatDate(this._chartStore.timeScaleStore().dateTimeFormat(), value, 'YYYY-MM-DD hh:mm')
+            const displayDateTimeFormat = this._chartStore.styleOptions().xAxis.dateTimeFormat
+            values[index] = formatDate(this._chartStore.timeScaleStore().dateTimeFormat(), value, displayDateTimeFormat)
             break
           }
           case values.length - 1: {

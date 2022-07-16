@@ -229,7 +229,7 @@ export default class TechnicalIndicatorView extends View {
     const barSpace = this._chartStore.timeScaleStore().barSpace()
     const halfBarSpace = this._chartStore.timeScaleStore().halfBarSpace()
     visibleDataList.forEach(({ x, index, data }, n) => {
-      onDrawing(x, index, data, dataList[index-1], halfBarSpace, barSpace, n)
+      onDrawing(x, index, data, dataList[index - 1], halfBarSpace, barSpace, n)
     })
     onDrawEnd && onDrawEnd()
   }

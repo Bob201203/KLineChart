@@ -24,15 +24,25 @@ export default {
   shouldCheckParamCount: false,
   shouldOhlc: true,
   plots: [
-    { key: 'emaShort', title: 'EMA13: ', type: 'line' },
+    { key: 'ema13', title: 'EMA13: ', type: 'line' },
     { key: 'emaLong', title: 'EMA26: ', type: 'line' },
     { key: 'up', title: 'Up: ', type: 'line' },
-    { key: 'bo', title: 'Bottom: ', type: 'line' }
+    { key: 'bo', title: 'Bottom: ', type: 'line' },
+    { key: 'rate', title: 'R:', type: 'text' }
   ],
   regeneratePlots: (params) => {
-    return params.map(p => {
-      return { key: `ema${p}`, title: `EMA${p}: `, type: 'line' }
+    const maxValue = Math.max(...params)
+    const plots = params.map(p => {
+      const plot = { key: `ema${p}`, title: `EMA${p}: `, type: 'line' }
+      if (p === maxValue) {
+        plot.key = 'emaLong'
+      }
+      return plot
     })
+    plots.push({ key: 'up', title: 'Up: ', type: 'line' })
+    plots.push({ key: 'bo', title: 'Bottom: ', type: 'line' })
+    plots.push({ key: 'rate', title: 'R:', type: 'text' })
+    return plots
   },
   calcTechnicalIndicator: (dataList, { params, plots }) => {
     const emaValues = []
@@ -50,24 +60,26 @@ export default {
       kLineData.ema = ema
       return ema
     })
-    let r = 0.2
+    let r = 0.20
     if (dataList.length >= 100) {
       var arr = []
       for (var i = dataList.length - 100; i < dataList.length; i++) {
-        if (dataList[i].close < kk[i]['emaLong']) {
-          arr.push(kk[i]['emaLong'] / dataList[i].close - 1)
+        if (dataList[i].high > kk[i].emaLong && dataList[i].low < kk[i].emaLong) {
+          arr.push(Math.max(dataList[i].high / kk[i].emaLong - 1, 1 - dataList[i].low / kk[i].emaLong))
+        } else if (dataList[i].high > kk[i].emaLong) {
+          arr.push(dataList[i].high / kk[i].emaLong - 1)
         } else {
-          arr.push(1 - kk[i]['emaLong'] / dataList[i].close)
+          arr.push(1 - dataList[i].low / kk[i].emaLong)
         }
       }
       arr.sort()
       r = 0
-      for (var i = 85; i < 100; i++) {
+      for (i = 85; i < 100; i++) {
         r = r + arr[i]
       }
-      r = r / 15;
-      for (var i = 86; i < 100; i++) {
-        if (r <= arr[i] && r > arr[i-1]) {
+      r = r / 15
+      for (i = 86; i < 100; i++) {
+        if (r <= arr[i] && r > arr[i - 1]) {
           r = arr[i]
           break
         }
@@ -80,12 +92,13 @@ export default {
       if (r < arr[90]) {
         r = arr[90]
       }
+      // rate 太小会引起绘图的时候，y轴从rate（接近0）开始计算
+      // 因此这里暂时加了一个close，这个问题有待进一步优化
+      kk[dataList.length - 1].rate = Math.floor(dataList[dataList.length - 1].close) + r
     }
-    var e
-    for (var i = 0; i < kk.length; i++) {
-      e = kk[i]['emaLong']
-      kk[i]['up'] = e * (1 + r)
-      kk[i]['bo'] = e * (1 - r)
+    for (i = 0; i < kk.length; i++) {
+      kk[i].up = kk[i].emaLong * (1 + r)
+      kk[i].bo = kk[i].emaLong * (1 - r)
     }
     return kk
   }

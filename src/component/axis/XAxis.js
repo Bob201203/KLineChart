@@ -37,6 +37,7 @@ export default class XAxis extends Axis {
     if (tickLength > 0) {
       const dateTimeFormat = this._chartStore.timeScaleStore().dateTimeFormat()
       const tickText = this._chartStore.styleOptions().xAxis.tickText
+      const displayDateTimeFormat = this._chartStore.styleOptions().xAxis.dateTimeFormat
       this._measureCtx.font = createFont(tickText.size, tickText.weight, tickText.family)
       const defaultLabelWidth = calcTextWidth(this._measureCtx, '00-00 00:00')
       const pos = parseInt(ticks[0].v, 10)
@@ -66,7 +67,7 @@ export default class XAxis extends Axis {
       }
       const optimalTickLength = optimalTicks.length
       if (optimalTickLength === 1) {
-        optimalTicks[0].v = formatDate(dateTimeFormat, optimalTicks[0].oV, 'YYYY-MM-DD hh:mm')
+        optimalTicks[0].v = formatDate(dateTimeFormat, optimalTicks[0].oV, displayDateTimeFormat)
       } else {
         const firstTimestamp = optimalTicks[0].oV
         const secondTimestamp = optimalTicks[1].oV
