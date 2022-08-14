@@ -73,16 +73,20 @@ export function formatPrecision (value, precision = 2) {
  */
 export function formatBigNumber (value) {
   if (isNumber(+value)) {
+    var negative = (value >= 0 ? '' : '-')
+    if (value < 0) {
+      value = -value
+    }
     if (value > 1000000000) {
-      return `${+((value / 1000000000).toFixed(3))}B`
+      return `${negative}${+((value / 1000000000).toFixed(3))}B`
     }
     if (value > 1000000) {
-      return `${+((value / 1000000).toFixed(3))}M`
+      return `${negative}${+((value / 1000000).toFixed(3))}M`
     }
     if (value > 1000) {
-      return `${+((value / 1000).toFixed(3))}K`
+      return `${negative}${+((value / 1000).toFixed(3))}K`
     }
-    return value
+    return `${negative}${+(value.toString())}`
   }
   return '--'
 }

@@ -216,7 +216,7 @@ const defaultCandle = {
   tooltip: {
     showRule: TooltipShowRule.ALWAYS,
     showType: TooltipShowType.STANDARD,
-    labels: ['时间: ', '开: ', '收: ', '高: ', '低: ', '成交量: '],
+    labels: ['时间: ', '开: ', '收: ', '高: ', '低: ', '量: '],
     values: null,
     defaultValue: 'n/a',
     rect: {

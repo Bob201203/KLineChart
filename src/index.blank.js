@@ -24,6 +24,9 @@ import movingAverageConvergenceDivergence from './extension/technicalindicator/d
 import simpleMovingAverage from './extension/technicalindicator/directionalmovement/simpleMovingAverage'
 import tripleExponentiallySmoothedAverage from './extension/technicalindicator/directionalmovement/tripleExponentiallySmoothedAverage'
 
+import newHighNewLow from './extension/technicalindicator/directness/newHighNewLow'
+import rps from './extension/technicalindicator/directness/rps'
+
 import brar from './extension/technicalindicator/momentum/brar'
 import currentRatio from './extension/technicalindicator/momentum/currentRatio'
 import momentum from './extension/technicalindicator/momentum/momentum'
@@ -51,6 +54,7 @@ klinecharts.extension.addTechnicalIndicatorTemplate([
   averagePrice, bullAndBearIndex, differentOfMovingAverage, directionalMovementIndex, easeOfMovementValue,
   exponentialMovingAverage, forceIndex, movingAverage, movingAverageConvergenceDivergence, simpleMovingAverage,
   tripleExponentiallySmoothedAverage,
+  newHighNewLow, rps,
   brar, currentRatio, momentum, psychologicalLine, rateOfChange, volumeRatio,
   awesomeOscillator, bias, commodityChannelIndex, relativeStrengthIndex, stockIndicatorKDJ, williamsR,
   bollingerBands, stopAndReverse,

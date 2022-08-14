@@ -22,6 +22,8 @@ export default {
   name: 'FI',
   shortName: 'FI',
   calcParams: [2, 13],
+  shouldFormatBigNumber: true,
+  precision: 0,
   plots: [
     { key: 'fiShort', title: 'FI2: ', baseValue: 0, type: 'line' },
     { key: 'fiLong', title: 'FI13: ', baseValue: 0, type: 'line' }

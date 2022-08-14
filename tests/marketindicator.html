@@ -1,0 +1,85 @@
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<!DOCTYPE html>
+<html lang="en" >
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="keywords" content="市场指数"/>
+    <meta name="description" content="shape test"/>
+    <script type="text/javascript" src="../dist/klinecharts.min.js"></script>
+    <script type="text/javascript" src="./js/axios.min.js"></script>
+    <script type="text/javascript" src="./js/dataSource.js"></script>
+    <script type="text/javascript" src="./js/coreapi.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css/chart.css"/>
+    <title>技术指标</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="buttons"></div>
+    <div id="chart"></div>
+    <script>
+      var kchart;
+      const newKLine = function(data) {
+        const dataList = []
+        const nhnl = data.nhnl
+        const columns = data.columns
+        const items = data.items
+        let k = 0
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i]
+          const kLineModel = {}
+          for (let j = 0; j < columns.length; j++) {
+            kLineModel[columns[j]] = item[j]
+          }
+          if (nhnl !== undefined && k < nhnl.length && kLineModel['timestamp'] == nhnl[k][0]) {
+            kLineModel['nhnl'] = {
+              'z': 0,
+              'nhnl': nhnl[k][1]
+            }
+            k++
+          } else {
+            kLineModel['nhnl'] = {
+              'z': 0
+            }
+          }
+          dataList.push(kLineModel)
+        }
+        this.code = data.symbol
+        this.name = data.name
+        kchart.applyNewData(dataList)
+      }
+      const loadkline = function(code) {
+        kline(code).then(function (response) {
+          if (response.code === 0) {
+            newKLine(response.data)
+          }
+        })
+      }
+      window.onload = function () {
+        kchart = klinecharts.init('chart')
+        // 创建一个主图指标叠加
+        kchart.createTechnicalIndicator('EMA', true, { id: 'candle_pane' })
+        // 创建一个副图指标
+        kchart.createTechnicalIndicator({ name: 'VOL', calcParams: [10], styles: { margin: { top: 0.2, bottom: 2 } } })
+        kchart.createTechnicalIndicator('NHNL', false)
+        kchart.createTechnicalIndicator('MACD', false)
+        kchart.createTechnicalIndicator('FI', false)
+        loadkline('SH000001')
+      }
+    </script>
+  </body>
+</html>
