@@ -14,7 +14,7 @@
 
 import TechnicalIndicatorOverlayView from './TechnicalIndicatorOverlayView'
 import { isFunction, isObject, isArray, isValid } from '../utils/typeChecks'
-import { formatBigNumber, formatDate, formatPrecision, formatValue } from '../utils/format'
+import { formatDate, formatPrecision, formatValue, formatChange } from '../utils/format'
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { TooltipShowType, YAxisPosition } from '../options/styleOptions'
 import { renderFillRoundRect, renderStrokeRoundRect } from '../renderer/rect'
@@ -324,15 +324,18 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
       }
     } else {
       const pricePrecision = this._chartStore.pricePrecision()
-      const volumePrecision = this._chartStore.volumePrecision()
+      // const volumePrecision = this._chartStore.volumePrecision()
       values = [
         formatValue(kLineData, 'timestamp'),
         formatValue(kLineData, 'open'),
         formatValue(kLineData, 'close'),
         formatValue(kLineData, 'high'),
         formatValue(kLineData, 'low'),
-        formatValue(kLineData, 'volume')
+        formatValue(kLineData, 'chg')
       ]
+      if (values[5] !== '--' && values[2] !== '--') {
+        values[5] = (values[5] / (values[2] - values[5]))
+      }
       values.forEach((value, index) => {
         switch (index) {
           case 0: {
@@ -341,7 +344,7 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
             break
           }
           case values.length - 1: {
-            values[index] = formatBigNumber(formatPrecision(value, volumePrecision))
+            values[index] = formatChange(value)
             break
           }
           default: {

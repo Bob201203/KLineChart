@@ -68,6 +68,21 @@ export function formatPrecision (value, precision = 2) {
 }
 
 /**
+ * 格式化涨跌幅
+ */
+export function formatChange (value, precision = 2) {
+  const v = +value
+  if ((v || v === 0) && isNumber(v)) {
+    const vf = (v * 100).toFixed(precision)
+    if (vf >= 0) {
+      return '+' + vf.toString() + '%'
+    }
+    return vf.toString() + '%'
+  }
+  return `${v}`
+}
+
+/**
  * 格式化大数据
  * @param value
  */
