@@ -238,7 +238,7 @@ const defaultCandle = {
       weight: 'normal',
       color: '#76808F',
       marginLeft: 8,
-      marginTop: 6,
+      marginTop: 2,
       marginRight: 8,
       marginBottom: 0
     }
@@ -299,7 +299,7 @@ const defaultTechnicalIndicator = {
       family: 'Helvetica Neue',
       weight: 'normal',
       color: '#76808F',
-      marginTop: 6,
+      marginTop: 2,
       marginRight: 8,
       marginBottom: 0,
       marginLeft: 8
