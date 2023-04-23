@@ -1,7 +1,9 @@
 /node_modules
 /.idea
 /website
-/lib
 /dist
+/types
+/docs/.vitepress/cache
 
 /package-lock.json
+/pnpm-lock.yaml
